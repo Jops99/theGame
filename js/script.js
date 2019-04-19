@@ -13,7 +13,7 @@
 		//Carrega o arquivo de áudio
 		game.load.audio('sndStar','audio/sndStar.mp3');
 		
-		game.load.spritesheet('dude','img/laizaSprite.png',40,60,20);
+		game.load.spritesheet('dude','img/laizaSprite.png',40,48,15);
 	}
 	
 	function create(){
