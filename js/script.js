@@ -3,6 +3,7 @@
 	var platforms,player,keys,stars,globSndStar,txtScore,score = 0;
 	var keyW,keyA,keyD;
 	var sprite;	
+	var isPlayerDead;
 	
 	function preload(){
 		game.load.image('sky','img/sky.png');
@@ -12,15 +13,15 @@
 		game.load.spritesheet('ms', 'img/metalslug_mummy37x45.png', 37, 45, 18);
 		
 		//Carrega o arquivo de áudio
-		game.load.audio('sndStar','audio/Scyphe-Goldrunner_(Maccie_Pimp_Me Up_Remix).mp3');
+		game.load.audio('backtracking','audio/Scyphe-Goldrunner_(Maccie_Pimp_Me Up_Remix).mp3');
 		
 		game.load.spritesheet('dude','img/laizaSprite.png',40,48,15);
 	}
 	
 	function create(){
 		//Associa o áudio à sua variável
-		globSndStar = game.add.audio('sndStar');
-		globSndStar.play();
+		backtrackingSound = game.add.audio('backtracking');
+		backtrackingSound.play();
 	
 		keys = game.input.keyboard.createCursorKeys();
 		
@@ -60,17 +61,17 @@
 		sprite.animations.add('walk');sprite
 		sprite.animations.play('walk', 50, true);
 		sprite.body.collideWorldBounds = true;	
-		game.add.tween(sprite).to({ x: game.width }, 10000, Phaser.Easing.Linear.None, true);
+		game.add.tween(sprite).to({ x: game.width }, 10000, Phaser.Easing.Linear.None, true).to({ x:0 }, 10000, Phaser.Easing.Linear.None, true).loop();
 		
 		//Player
-		player = game.add.sprite(50, game.world.height - 150,'dude');
+		player = game.add.sprite(10, game.world.height - 150,'dude');
 		game.physics.arcade.enable(player);
 		player.body.gravity.y = 300;
 		player.body.bounce.y = 0.2;
 		player.body.collideWorldBounds = true;
 		player.animations.add('left',[0,1,2,3,4],10,true);
 		player.animations.add('right',[11,12,13,14,15],10,true);
-		
+		isPlayerDead = false;
 		txtScore = game.add.text(16,16,'SCORE: 0',{fontSize:'32px',fill:'#fff'});
 	}
 	
@@ -78,7 +79,8 @@
 		game.physics.arcade.collide(player,platforms);
 		game.physics.arcade.collide(stars,platforms);
 		game.physics.arcade.overlap(player,stars,collectStar);
-		
+		game.physics.arcade.overlap(player, sprite, killSprite);
+
 		/*
 			Beging Player updates
 		*/
@@ -106,11 +108,15 @@
 	}
 	
 	function collectStar(player,star){
-		//Toca o som
 		
 		star.kill();
 		score += 10;
 		txtScore.text = 'SCORE: ' + score;
+	}
+
+	function killSprite(player,sprite){
+		player.kill();
+		isPlayerDead = true;
 	}
 }());
 
